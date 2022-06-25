@@ -8,7 +8,7 @@ using System.Text;
 
 namespace RepositoryLayer.Services
 {
-   public class UserRL : IUserRL  
+   public class UserRL : IUserRL   
     {
 
 
