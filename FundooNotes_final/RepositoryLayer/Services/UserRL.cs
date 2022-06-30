@@ -8,10 +8,8 @@ using System.Text;
 
 namespace RepositoryLayer.Services
 {
-   public class UserRL : IUserRL  
+   public class UserRL : IUserRL   
     {
-
-
         FundooContext fundooContext;
         IConfiguration configuration;
         public UserRL(FundooContext fundooContext, IConfiguration configuration)
