@@ -8,6 +8,6 @@ namespace RepositoryLayer.Interfaces
    public interface IUserRL
     {
         public void AddUser(UserPostModel userPostModel);
-      
+        public string LogInUser(String userName ,String Password);
     }
 }

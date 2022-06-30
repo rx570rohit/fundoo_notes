@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fundoo_NotesWebApi", "Fundoo_NotesWebApi\Fundoo_NotesWebApi.csproj", "{A34F92D3-DFE4-48DB-AECB-DB10DAC6697C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fundoo_NotesWebApi", "Fundoo_NotesWebApi\Fundoo_NotesWebApi.csproj", "{A34F92D3-DFE4-48DB-AECB-DB10DAC6697C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuisnessLayer", "BuisnessLayer\BuisnessLayer.csproj", "{1E26B68C-8CB5-497C-8542-30E652433F8E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuisnessLayer", "BuisnessLayer\BuisnessLayer.csproj", "{1E26B68C-8CB5-497C-8542-30E652433F8E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseLayer", "DatabaseLayer\DatabaseLayer.csproj", "{CE96911A-8A38-4CD9-9775-9BBAABA49E7E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabaseLayer", "DatabaseLayer\DatabaseLayer.csproj", "{CE96911A-8A38-4CD9-9775-9BBAABA49E7E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepositoryLayer", "RepositoryLayer\RepositoryLayer.csproj", "{8663ADE8-2382-46EE-9F89-B515552E8E06}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepositoryLayer", "RepositoryLayer\RepositoryLayer.csproj", "{8663ADE8-2382-46EE-9F89-B515552E8E06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
