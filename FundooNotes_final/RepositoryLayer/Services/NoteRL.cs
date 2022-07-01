@@ -1,9 +1,11 @@
 ﻿using DatabaseLayer.User;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using RepositoryLayer.Interfaces;
 using RepositoryLayer.Services.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,7 +25,9 @@ namespace RepositoryLayer.Services
             this.configuration = configuration;
         }
 
-        public async Task AddNote(int UserId, NotePostModel notePostModel)
+
+        
+    public async Task AddNote(int UserId, NotePostModel notePostModel)
         {
             try
             {
@@ -43,5 +47,24 @@ namespace RepositoryLayer.Services
                 throw e;
             }
         }
+
+        public async Task<List<Note>> GetAllNote(int userId)
+        {
+            try
+            {
+                var note = fundooContext.Notes.Where(u => u.UserId == userId).FirstOrDefault();
+                if (note == null)
+                {
+                    return null;
+                }
+                return await fundooContext.Notes.ToListAsync();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
     }
+
+   
 }
