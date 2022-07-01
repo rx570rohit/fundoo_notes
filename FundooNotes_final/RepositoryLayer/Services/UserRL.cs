@@ -10,6 +10,8 @@ using System.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+using Experimental.System.Messaging;
+using Microsoft.Web.Services3.Security.Utility;
 
 namespace RepositoryLayer.Services
 {
@@ -18,7 +20,7 @@ namespace RepositoryLayer.Services
         FundooContext fundooContext;
         IConfiguration configuration;
 
-        public readonly String _secret;
+        private readonly string _secret;
 
 
         public UserRL(FundooContext fundooContext, IConfiguration configuration)
@@ -26,6 +28,8 @@ namespace RepositoryLayer.Services
             this.fundooContext = fundooContext;
 
             this.configuration = configuration;
+            this._secret = configuration.GetSection("JwtConfig").GetSection("SecretKey").Value;
+
         }
         public void AddUser(UserPostModel userPostModel)
         {
@@ -69,26 +73,113 @@ namespace RepositoryLayer.Services
 
         }
 
-        private String GenerateJwtToken(String email, int userId)
+      
+
+        public bool ForgotPassword(string Email)
+        {
+            try
+            {
+                var user = fundooContext.Users.FirstOrDefault(u => u.Email == Email);
+                if (user == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    MessageQueue queue;
+              
+                    if (MessageQueue.Exists(@".\Private$\FundooQueue"))
+                    {
+                        queue = new MessageQueue(@".\Private$\FundooQueue");
+                    }
+                    else
+                    {
+                        queue = MessageQueue.Create(@".\Private$\FundooQueue");
+                    }
+
+                    Message MyMessage = new Message();
+                    MyMessage.Formatter = new BinaryMessageFormatter();
+                    MyMessage.Body = GenerateJwtToken(Email, user.UserId);
+                    MyMessage.Label = "Forget Password Email";
+                    queue.Send(MyMessage);
+
+                    Message msg = queue.Receive();
+                    msg.Formatter = new BinaryMessageFormatter();
+                    EmailService.SendEmail(Email, msg.Body.ToString());
+                    queue.ReceiveCompleted += new ReceiveCompletedEventHandler(msmqQueue_ReceiveCompleted);
+                    queue.BeginReceive();
+                    queue.Close();
+                    return true;
+
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+        private void msmqQueue_ReceiveCompleted(object sender, ReceiveCompletedEventArgs e)
+        {
+            try
+            {
+                MessageQueue queue = (MessageQueue)sender;
+                Message msg = queue.EndReceive(e.AsyncResult);
+                EmailService.SendEmail(e.Message.ToString(), GenerateToken(e.Message.ToString()));
+                queue.BeginReceive();
+            }
+            catch (MessageQueueException ex)
+            {
+                if (ex.MessageQueueErrorCode ==
+                   MessageQueueErrorCode.AccessDenied)
+                {
+                    Console.WriteLine("Access is denied. " +
+                        "Queue might be a system queue.");
+                }
+            }
+        }
+
+        private string GenerateJwtToken(string email, int userId)
+        {
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.ASCII.GetBytes(this._secret);
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(new[]
+                    {
+                    new Claim(ClaimTypes.Email, email),
+                    new Claim("UserId", userId.ToString())
+                    }),
+
+                    Expires = DateTime.UtcNow.AddMinutes(15),
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                };
+
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                return tokenHandler.WriteToken(token);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+        public string GenerateToken(string Email )
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_secret);
-            var tokenDescriptor = new SecurityTokenDescriptor
+            var key = Encoding.ASCII.GetBytes(this._secret);
+            var tokenDiscriptor =new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.Email,email),
-                    new Claim("UserID",userId.ToString()),
+                    new Claim(ClaimTypes.Email,Email)
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(15),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
+                SigningCredentials=new SigningCredentials(new SymmetricSecurityKey(key),SecurityAlgorithms.HmacSha256Signature)
+        };
+            var token =tokenHandler.CreateToken(tokenDiscriptor);
             return tokenHandler.WriteToken(token);
         }
-
-        
-      
 
     }
 }
