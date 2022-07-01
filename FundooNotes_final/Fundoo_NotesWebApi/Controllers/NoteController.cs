@@ -38,6 +38,21 @@ namespace FundooNote.Controllers
                 throw e;
             }
         }
-        
+
+        public async Task<ActionResult> GetNotes(NotePostModel notePostModel)
+        {
+            try
+            {
+                var currentUser = HttpContext.User;
+                int userId = Convert.ToInt32(currentUser.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+                await this.noteBL.AddNote(userId, notePostModel);
+                return this.Ok(new { success = true, message = "Note Added Sucessfully" });
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
     }
 }

@@ -32,12 +32,14 @@ namespace Fundoo_NotesWebApi.Controllers
                 var user = fundooContext.Users.FirstOrDefault(u => u.Email == userPostModel.Email);
                 if(user != null)
                 {
-                    return this.Ok(new { success = true, message = "Registration Successfull" });
+                    return this.BadRequest(new { success = false, message = "Email Already Exits" });
+
                 }
-               
-                return this.BadRequest(new { success = false, message = "Email Already Exits" });
+
+                return this.Ok(new { success = true, message = "Registration Successfull" });
+
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw e;
             }
