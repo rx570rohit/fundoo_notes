@@ -43,5 +43,56 @@ namespace Fundoo_NotesWebApi.Controllers
                 throw e;
             }
         }
+        [HttpPost("LogIn")]
+
+        public IActionResult LogIn(String Email,String Password)
+        {
+            try
+            {
+                var user = fundooContext.Users.FirstOrDefault(u => u.Email == Email);
+                
+
+                if (user == null)
+                {
+                    return this.BadRequest(new { success = false, message = "Email doesn't Exits" });
+                }
+
+                string password = PwdEncryptDecryptService.DecryptPassword(user.Password);
+
+                var userdata1 = fundooContext.Users.FirstOrDefault(u => u.Email == Email && password == Password);
+                if (userdata1 == null)
+                {
+                    return this.BadRequest(new { success = false, message = "Password is Invalid" });
+                }
+
+                string token = this.userBL.LogInUser(Email, Password);
+
+                return this.Ok(new { success = true, message = "LogIn Successfull", data = token });
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            
+        }
+        [HttpPost("ForgotPassword")]
+        public IActionResult ForgotPassword(String Email)
+        {
+            var user = fundooContext.Users.FirstOrDefault(u => u.Email == Email);
+            if (user == null)
+            {
+                return this.BadRequest(new {success =false,message = "Email Not Found" });
+            }
+            string Password = PwdEncryptDecryptService.DecryptPassword(user.Password);
+
+            var userdata1 = fundooContext.Users.FirstOrDefault(u => u.Email == Email);
+            if (userdata1 == null)
+            {
+                return this.BadRequest(new { success = false, message = "Password " });
+            }
+            bool result = this.userBL.ForgotPassword(Email);
+            return this.Ok(new { success = true, message = "LogIn Successfull", data = result });
+        }
+
     }
 }

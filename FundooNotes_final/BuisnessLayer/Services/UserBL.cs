@@ -28,6 +28,32 @@ namespace BuisnessLayer.Services
             {
                 throw e;
             }
+
+        }
+
+        public string LogInUser(string Email, string Password)
+        {
+            try
+            {
+                return this.userRL.LogInUser(Email, Password);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+
+        public bool ForgotPassword(string Email)
+        {
+            try
+            {
+                return this.userRL.ForgotPassword(Email);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
     }
 }
