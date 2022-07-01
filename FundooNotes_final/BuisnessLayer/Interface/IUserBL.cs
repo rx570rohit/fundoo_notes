@@ -12,6 +12,6 @@ namespace BuisnessLayer.Interface
 
 
         public bool ForgotPassword(String Email);
-
+        bool ResetPassword(string email, UserPasswordModel userPasswordModel);
     }
 }

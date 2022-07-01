@@ -181,5 +181,28 @@ namespace RepositoryLayer.Services
             return tokenHandler.WriteToken(token);
         }
 
+        public bool ResetPassword(string email, UserPasswordModel userPasswordModel)
+        {
+            try
+            {
+                var user = fundooContext.Users.Where(u => u.Email == email).FirstOrDefault();
+
+                if (user == null)
+                {
+                    return false;
+                }
+                if (userPasswordModel.Password == userPasswordModel.ConfirmPassword)
+                {
+                    user.Password = PwdEncryptDecryptService.EncryptPassword(userPasswordModel.Password);
+                    fundooContext.SaveChanges();
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
     }
 }
