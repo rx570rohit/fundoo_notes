@@ -10,5 +10,6 @@ namespace RepositoryLayer.Services
         {
         }
         public DbSet<User> Users { get; set; }
+        public DbSet<Note> Notes { get; set; }
     }
 }
