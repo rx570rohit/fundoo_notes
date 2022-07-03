@@ -11,5 +11,8 @@ namespace RepositoryLayer.Interfaces
     {
         Task AddNote(int UserId, NotePostModel notePostModel);
         Task<List<Note>> GetAllNote(int userId);
+        Task <List<Note>> GetNote(int NotesId);
+        Task<String> UpdateNote(NotePostModel noteUpdateModel, long noteId);
+        Task DeleteNotes(long NoteId);
     }
 }

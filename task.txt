@@ -1,0 +1,26 @@
+{
+  "firstName": "RohitSoni",
+  "lastName": "SoniRohit",
+  "email": "soni1rohit570@gmail.com",
+  "password": "Rx@570rrr"
+}
+
+
+{
+  "firstName": "RohitSoni",
+  "lastName": "SoniRohit",
+  "email": "sonirohit570@gmail.com",
+  "password": "Rx@570sss"
+}
+
+
+task 
+ 1. date +7 
+ 2. date reminder velidation yyyy-mm-dd hh:mm:ss
+ 
+
+{
+  "title": "ASP.NET",
+  "description": "Full Stack",
+  "colour": "Green2"
+}

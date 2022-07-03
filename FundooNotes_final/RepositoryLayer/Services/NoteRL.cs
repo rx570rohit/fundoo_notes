@@ -26,8 +26,8 @@ namespace RepositoryLayer.Services
         }
 
 
-        
-    public async Task AddNote(int UserId, NotePostModel notePostModel)
+
+        public async Task AddNote(int UserId, NotePostModel notePostModel)
         {
             try
             {
@@ -36,6 +36,7 @@ namespace RepositoryLayer.Services
                 note.Title = notePostModel.Title;
                 note.Description = notePostModel.Description;
                 note.Colour = notePostModel.Colour;
+                note.Reminder = DateTime.Now.AddDays(7);   
                 note.CreatedDate = DateTime.Now;
                 note.ModifiedDate = DateTime.Now;
                 fundooContext.Add(note);
@@ -63,8 +64,71 @@ namespace RepositoryLayer.Services
             {
                 throw e;
             }
+
+        }
+
+        public async Task<List<Note>> GetNote(int NotesId)
+        {
+            try
+            {
+                var listNote = fundooContext.Notes.Where(X => X.NoteId == NotesId).SingleOrDefault();
+                if (listNote != null)
+                {
+                    return await fundooContext.Notes.Where(list => list.NoteId == NotesId).ToListAsync();
+                }
+                return null;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        
+
+       
+
+         public async Task<string> UpdateNote(NotePostModel noteUpdateModel, long noteId)
+        {
+            try
+            {
+                var update = fundooContext.Notes.Where(X => X.NoteId == noteId).FirstOrDefault();
+                if (update != null && update.NoteId == noteId)
+                {
+                    update.Title = noteUpdateModel.Title;
+                    update.Description = noteUpdateModel.Description;
+                    update.ModifiedDate = DateTime.Now;
+                    update.Colour = noteUpdateModel.Colour;
+
+                    this.fundooContext.SaveChanges();
+                    return  "Note is Modified";
+                }
+                else
+                {
+                    return "Note Not Modified";
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task DeleteNotes(long NoteId)
+        {
+            try
+            {
+                var deleteNote = fundooContext.Notes.Where(X => X.NoteId == NoteId).SingleOrDefault();
+                if (deleteNote != null)
+
+                    fundooContext.Notes.Remove(deleteNote);
+                this.fundooContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            
         }
     }
-
-   
 }

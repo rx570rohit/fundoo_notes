@@ -28,15 +28,16 @@ namespace Fundoo_NotesWebApi.Controllers
         {
             try
             {
-                this.userBL.AddUser(userPostModel);
+              
                 var user = fundooContext.Users.FirstOrDefault(u => u.Email == userPostModel.Email);
                 if(user != null)
                 {
                     return this.BadRequest(new { success = false, message = "Email Already Exits" });
 
                 }
-
+                this.userBL.AddUser(userPostModel);
                 return this.Ok(new { success = true, message = "Registration Successfull" });
+
 
             }
             catch (Exception e)
@@ -44,7 +45,7 @@ namespace Fundoo_NotesWebApi.Controllers
                 throw e;
             }
         }
-        [HttpPost("LogIn")]
+        [HttpPost("LogIn/email/password")]
 
         public IActionResult LogIn(String Email,String Password)
         {
@@ -76,7 +77,7 @@ namespace Fundoo_NotesWebApi.Controllers
             }
             
         }
-        [HttpPost("ForgotPassword")]
+        [HttpPost("Forgotpassword/Email")]
         public IActionResult ForgotPassword(String Email)
         {
             var user = fundooContext.Users.FirstOrDefault(u => u.Email == Email);
@@ -92,7 +93,7 @@ namespace Fundoo_NotesWebApi.Controllers
                 return this.BadRequest(new { success = false, message = "Password " });
             }
             bool result = this.userBL.ForgotPassword(Email);
-            return this.Ok(new { success = true, message = "LogIn Successfull", data = result });
+            return this.Ok(new { success = true, message = "Tokne sented successfully to respective email Id ", data = result });
         }
 
         [Authorize]

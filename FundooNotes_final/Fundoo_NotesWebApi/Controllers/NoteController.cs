@@ -25,7 +25,7 @@ namespace FundooNote.Controllers
         }
 
         [Authorize]
-        [HttpPost]
+        [HttpPost("user/AddNotes")]
         public async Task<ActionResult> AddNote(NotePostModel notePostModel)
         {
             try
@@ -42,7 +42,8 @@ namespace FundooNote.Controllers
         }
 
         [Authorize]
-        [HttpGet]
+        [HttpGet("User/GetAll")]
+
         public async Task<ActionResult> GetAllNote()
         {
             try
@@ -68,6 +69,74 @@ namespace FundooNote.Controllers
                 throw e;
             }
 
+        }
+
+        [Authorize]
+        [HttpGet("User/getNote")]
+
+        public async Task<ActionResult> GetNote(int noteId)
+        {
+            try
+            {
+                var currentUser = HttpContext.User;
+                var note = fundooContext.Notes.FirstOrDefault(u => u.NoteId == noteId);
+                if (note == null)
+                {
+
+                    return this.BadRequest(new { success = true, message = "Note Doesn't Exits" });
+
+                }
+                List<Note> Note = new List<Note>();
+
+                Note = await this.noteBL.GetNote(noteId);
+
+                return Ok(new { success = true, message = "GetNote by id Successful", data = note });
+
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+        }
+
+        [Authorize]
+        [HttpPut("User/updateNotes")]
+
+        public async Task<ActionResult> UpdateNotes(NotePostModel notePostModel ,int noteId)
+        {
+            try
+            {
+                var currentUser = HttpContext.User;
+                int userId = Convert.ToInt32(currentUser.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+                await this.noteBL.UpdateNote(notePostModel , noteId);
+                return this.Ok(new { success = true, message = "Note Updated Sucessfully" });
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+        }
+
+        [Authorize]
+        [HttpDelete("User/DeleteNotes")]
+
+        public async Task<ActionResult> DeleteNotes(long noteId)
+        {
+            try
+            {
+                var currentUser = HttpContext.User;
+                int userId = Convert.ToInt32(currentUser.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+
+                await this.noteBL.DeleteNotes(noteId);
+
+                return Ok(new { success = true, message = "Note deleted Successfully"});
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
     }

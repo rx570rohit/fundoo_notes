@@ -18,6 +18,7 @@ namespace RepositoryLayer.Services.Entities
         public bool IsPin { get; set; }
         public bool IsReminder { get; set; }
         public bool IsTrash { get; set; }
+       
         public DateTime Reminder { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
