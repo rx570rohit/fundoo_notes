@@ -10,18 +10,20 @@ namespace BusinessLayer.Interfaces
 {
     public interface INoteBL
     {
-        Task AddNote(int UserId, NotePostModel notePostModel);
+        Task AddNote(int userId, NotePostModel notePostModel);
         Task<List<Note>> GetAllNote(int userId);
 
-        Task <List<Note>> GetNote(int NotesId ,int UserId);
+        Task <List<Note>> GetNote(int NotesId ,int userId);
 
-        Task<string> UpdateNote(int  UserId ,NoteUpdateModel  noteUpdateModel, int NoteId);
-        Task DeleteNotes(int UserId,long NoteId);
+        Task<string> UpdateNote(int  userId ,NoteUpdateModel  noteUpdateModel, int NoteId);
+        Task DeleteNotes(int userId,long NoteId);
 
-        Task Reminder(int UserId, int NoteId, DateTime dateTime);
+        Task Reminder(int userId, int NoteId, DateTime dateTime);
 
-        Task PinNote(int UserId, int noteId);
-        Task ArchiveNote(int UserId, int noteId);
+        Task PinNote(int userId, int noteId);
+        Task ArchiveNote(int userId, int noteId);
+
+        Task ChangeNoteColour(int userId, int noteId,string colour);
 
     }
 }

@@ -215,6 +215,39 @@ namespace FundooNote.Controllers
             }
 
         }
+        [Authorize]
+        [HttpPut("ChangeNoteColour/{NoteId}")]
+
+        public async Task<ActionResult> ChangeNoteColour(int noteId, ColourUpdateModel colourUpdateModel)
+        {
+            
+
+            try
+            {
+                var currentUser = HttpContext.User;
+                int userId = Convert.ToInt32(currentUser.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+                var note = fundooContext.Notes.FirstOrDefault(u => u.UserId == userId && u.NoteId == noteId);
+
+                if (note == null)
+                {
+
+                    return this.BadRequest(new { success = true, message = "Sorry! Note Doesn't Exist Please Create a Notes" });
+
+                }
+                await this.noteBL.ChangeNoteColour(userId,noteId, colourUpdateModel.Colour);
+
+                return Ok(new { success = true, message = $"Note Pinned Successfully for the note, {note.Title} " });
+
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
+           
+
+        }
+
 
     }
 }

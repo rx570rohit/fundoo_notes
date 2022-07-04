@@ -20,5 +20,8 @@ namespace RepositoryLayer.Interfaces
         Task PinNote(int UserId, int noteId);
 
         Task ArchiveNote(int UserId, int noteId);
+        Task ChangeNoteColour(int userId, int noteId, String Colour);
+
+
     }
 }
