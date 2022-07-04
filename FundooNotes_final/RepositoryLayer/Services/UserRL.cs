@@ -11,7 +11,6 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using Experimental.System.Messaging;
-using Microsoft.Web.Services3.Security.Utility;
 
 namespace RepositoryLayer.Services
 {

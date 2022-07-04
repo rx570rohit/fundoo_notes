@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.Interfaces;
+using DatabaseLayer.Note;
 using DatabaseLayer.User;
 using RepositoryLayer.Interfaces;
 using RepositoryLayer.Services.Entities;
@@ -44,12 +45,12 @@ namespace BusinessLayer.Services
             }
         }
 
-        public async Task<List<Note>> GetNote(int NotesId)
+        public async Task<List<Note>> GetNote(int UserId, int NotesId)
         {
 
             try
             {
-                return await this.noteRL.GetNote(NotesId);
+                return await this.noteRL.GetNote(UserId,NotesId);
             }
             catch (Exception e)
             {
@@ -57,24 +58,22 @@ namespace BusinessLayer.Services
                 throw e;
             }
         }
-
-
-        public async Task<string> UpdateNote(NotePostModel noteUpdateModel, int NoteId)
+        public async Task<string> UpdateNote(int UserId,NoteUpdateModel noteUpdateModel, int NoteId)
         {
             try
             {
-                return await this.noteRL.UpdateNote(noteUpdateModel, NoteId);
+                return await this.noteRL.UpdateNote(UserId,noteUpdateModel, NoteId);
             }
             catch (Exception)
             {
                 throw;
             }
         }
-        public async Task DeleteNotes(long NoteId)
+        public async Task DeleteNotes(int UserId,long NoteId)
         {
             try
             {
-                 await this.noteRL.DeleteNotes(NoteId);
+                 await this.noteRL.DeleteNotes(UserId,NoteId);
             }
             catch (Exception e)
             {
@@ -82,5 +81,40 @@ namespace BusinessLayer.Services
             }
         }
 
+        public async Task Reminder(int UserId, int NoteId, DateTime dateTime)
+        {
+            try
+            {
+                await this.noteRL.Reminder(UserId, NoteId, dateTime);
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
+        }
+
+        public async Task ArchiveNote(int UserId, int noteId)
+        {
+            try
+            {
+                await this.noteRL.ArchiveNote(UserId, noteId);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+        public async Task PinNote(int UserId, int noteId)
+        {
+            try
+            {
+                await this.noteRL.PinNote(UserId, noteId);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
     }
 }

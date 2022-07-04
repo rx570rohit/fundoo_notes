@@ -1,4 +1,5 @@
-﻿using DatabaseLayer.User;
+﻿using DatabaseLayer.Note;
+using DatabaseLayer.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using RepositoryLayer.Interfaces;
@@ -36,7 +37,7 @@ namespace RepositoryLayer.Services
                 note.Title = notePostModel.Title;
                 note.Description = notePostModel.Description;
                 note.Colour = notePostModel.Colour;
-                note.Reminder = DateTime.Now.AddDays(7);   
+                note.Reminder = DateTime.Now.AddDays(7);
                 note.CreatedDate = DateTime.Now;
                 note.ModifiedDate = DateTime.Now;
                 fundooContext.Add(note);
@@ -67,7 +68,7 @@ namespace RepositoryLayer.Services
 
         }
 
-        public async Task<List<Note>> GetNote(int NotesId)
+        public async Task<List<Note>> GetNote(int UserId, int NotesId)
         {
             try
             {
@@ -84,11 +85,8 @@ namespace RepositoryLayer.Services
             }
         }
 
-        
 
-       
-
-         public async Task<string> UpdateNote(NotePostModel noteUpdateModel, long noteId)
+        public async Task<string> UpdateNote(int UserId, NoteUpdateModel noteUpdateModel, long noteId)
         {
             try
             {
@@ -100,8 +98,8 @@ namespace RepositoryLayer.Services
                     update.ModifiedDate = DateTime.Now;
                     update.Colour = noteUpdateModel.Colour;
 
-                    this.fundooContext.SaveChanges();
-                    return  "Note is Modified";
+                 await this.fundooContext.SaveChangesAsync();
+                    return "Note is Modified";
                 }
                 else
                 {
@@ -114,7 +112,7 @@ namespace RepositoryLayer.Services
             }
         }
 
-        public async Task DeleteNotes(long NoteId)
+        public async Task DeleteNotes(int UserId, long NoteId)
         {
             try
             {
@@ -122,13 +120,86 @@ namespace RepositoryLayer.Services
                 if (deleteNote != null)
 
                     fundooContext.Notes.Remove(deleteNote);
-                this.fundooContext.SaveChanges();
+               await this.fundooContext.SaveChangesAsync();
             }
             catch (Exception e)
             {
                 throw e;
             }
-            
+
+        }
+
+        public async Task Reminder(int UserId, int NoteId, DateTime dateTime)
+        {
+            try
+            {
+                var reminder = fundooContext.Notes.Where(x => x.NoteId == NoteId).FirstOrDefault();
+
+                reminder.Reminder = dateTime;
+
+              await this.fundooContext.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
+        }
+
+
+        public async Task PinNote(int UserId, int noteId)
+        {
+            try
+            {
+                var note = fundooContext.Notes.Where(x => x.UserId == UserId && x.NoteId == noteId).FirstOrDefault();
+                if (note != null)
+                {
+                    if (note.IsTrash == false)
+                    {
+                        if (note.IsPin == false)
+                        {
+                            note.IsPin = true;
+                        }
+                        else
+                        {
+                            note.IsPin = false;
+                        }
+                    }
+                }
+                await fundooContext.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public async Task ArchiveNote(int UserId, int noteId)
+        {
+            try
+            {
+                var note = fundooContext.Notes.Where(x => x.UserId == UserId && x.NoteId == noteId).FirstOrDefault();
+                if (note != null)
+                {
+                    if (note.IsTrash == false)
+                    {
+                        if (note.IsArchive == false)
+                        {
+                            note.IsArchive = true;
+                        }
+                        else
+                        {
+                            note.IsArchive = false;
+                        }
+                    }
+                }
+                await fundooContext.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
     }
 }
+

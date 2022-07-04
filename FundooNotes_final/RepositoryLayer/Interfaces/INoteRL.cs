@@ -1,4 +1,5 @@
-﻿using DatabaseLayer.User;
+﻿using DatabaseLayer.Note;
+using DatabaseLayer.User;
 using RepositoryLayer.Services.Entities;
 using System;
 using System.Collections.Generic;
@@ -11,8 +12,13 @@ namespace RepositoryLayer.Interfaces
     {
         Task AddNote(int UserId, NotePostModel notePostModel);
         Task<List<Note>> GetAllNote(int userId);
-        Task <List<Note>> GetNote(int NotesId);
-        Task<String> UpdateNote(NotePostModel noteUpdateModel, long noteId);
-        Task DeleteNotes(long NoteId);
+        Task <List<Note>> GetNote(int UserId,int NotesId);
+        Task<String> UpdateNote(int UserId,NoteUpdateModel noteUpdateModel, long noteId);
+        Task DeleteNotes(int UserId,long NoteId);
+
+        Task Reminder(int UserId, int NoteId, DateTime dateTime);
+        Task PinNote(int UserId, int noteId);
+
+        Task ArchiveNote(int UserId, int noteId);
     }
 }
