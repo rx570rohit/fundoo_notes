@@ -111,7 +111,7 @@ namespace FundooNote.Controllers
             {
                 var currentUser = HttpContext.User;
                 int userId = Convert.ToInt32(currentUser.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-                await this.noteBL.UpdateNote(userId,noteUpdateModel, noteId);
+                await this.noteBL.UpdateNote(userId,noteUpdateModel,noteId);
                 return this.Ok(new { success = true, message = "Note Updated Sucessfully" });
             }
             catch (Exception e)
@@ -152,15 +152,14 @@ namespace FundooNote.Controllers
                 int userId = Convert.ToInt32(currentUser.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
                 await this.noteBL.Reminder(userId, NoteId, Convert.ToDateTime( reminderUpdateModel.Reminder));
                 return Ok(new { success = true, message = "Reminder set Successfully" });
-
             }
             catch (Exception e)
             {
-
                 throw e;
             }
 
         }
+
         [Authorize]
         [HttpPut("ArchiveNote/{NoteId}")]
 
@@ -218,25 +217,23 @@ namespace FundooNote.Controllers
         [Authorize]
         [HttpPut("ChangeNoteColour/{NoteId}")]
 
-        public async Task<ActionResult> ChangeNoteColour(int noteId, ColourUpdateModel colourUpdateModel)
+        public async Task<ActionResult> ChangeNoteColour(int NoteId, ColourUpdateModel colourUpdateModel)
         {
-            
-
             try
             {
                 var currentUser = HttpContext.User;
                 int userId = Convert.ToInt32(currentUser.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-                var note = fundooContext.Notes.FirstOrDefault(u => u.UserId == userId && u.NoteId == noteId);
+                var note = fundooContext.Notes.FirstOrDefault(u => u.UserId == userId && u.NoteId == NoteId);
 
                 if (note == null)
                 {
 
-                    return this.BadRequest(new { success = true, message = "Sorry! Note Doesn't Exist Please Create a Notes" });
+                    return this.BadRequest(new { success = true, message = "Note Colour chainged Successfully" });
 
                 }
-                await this.noteBL.ChangeNoteColour(userId,noteId, colourUpdateModel.Colour);
+                await this.noteBL.ChangeNoteColour(userId,NoteId, colourUpdateModel.Colour);
 
-                return Ok(new { success = true, message = $"Note Pinned Successfully for the note, {note.Title} " });
+                return Ok(new { success = true, message = $"Note Colour chainged Successfully" });
 
             }
             catch (Exception e)

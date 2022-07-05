@@ -14,7 +14,7 @@
 }
 
 
-task 
+task (Done)
  1. date +7 
  2. date reminder velidation yyyy-mm-dd hh:mm:ss
  
@@ -24,3 +24,10 @@ task
   "description": "Full Stack",
   "colour": "Green2"
 }
+
+
+https://github.com/Remant-475/FundooNotes
+
+regex format(date time)
+
+(yyyy-mm-dd hh:mm:ss)2020-12-29 19:30:45
