@@ -73,6 +73,7 @@ namespace Fundoo_NotesWebApi.Controllers
         }
 
         [HttpGet("GetlabelByNotesId/{notesId}")]
+
         public IActionResult GetlabelByNotesId(int notesId)
         {
             try
