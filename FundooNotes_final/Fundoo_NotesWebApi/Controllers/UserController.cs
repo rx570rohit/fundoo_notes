@@ -45,7 +45,7 @@ namespace Fundoo_NotesWebApi.Controllers
                 throw e;
             }
         }
-        [HttpPost("LogIn/email/password")]
+        [HttpPost("LogInEmailPassword/{Email}/{Password}")]
 
         public IActionResult LogIn(String Email,String Password)
         {
@@ -77,7 +77,7 @@ namespace Fundoo_NotesWebApi.Controllers
             }
             
         }
-        [HttpPost("Forgotpassword/Email")]
+        [HttpPost("Forgotpassword/{Email}")]
         public IActionResult ForgotPassword(String Email)
         {
             var user = fundooContext.Users.FirstOrDefault(u => u.Email == Email);

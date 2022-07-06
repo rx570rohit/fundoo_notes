@@ -100,7 +100,7 @@ namespace Fundoo_NotesWebApi.Controllers
             }
         }
 
-        [HttpPut("UpdateLable")]
+        [HttpPut("{NoteId}/{LabelName}")]
         public async Task<IActionResult> UpdateLabel(int NoteId,string LabelName)
         {
             try
@@ -126,7 +126,7 @@ namespace Fundoo_NotesWebApi.Controllers
         }
 
 
-        [HttpDelete("DeleteLable")]
+        [HttpDelete("{NoteId}")]
         public async Task<IActionResult> DeleteLabel(int NoteId)
         {
             try

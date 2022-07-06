@@ -26,7 +26,7 @@ namespace FundooNote.Controllers
         }
 
         [Authorize]
-        [HttpPost("user/AddNotes")]
+        [HttpPost("AddNotes")]
         public async Task<ActionResult> AddNote(NotePostModel notePostModel)
         {
             try
@@ -43,7 +43,7 @@ namespace FundooNote.Controllers
         }
 
         [Authorize]
-        [HttpGet("User/GetAll")]
+        [HttpGet("UserGetAll")]
 
         public async Task<ActionResult> GetAllNote()
         {
@@ -73,7 +73,7 @@ namespace FundooNote.Controllers
         }
 
         [Authorize]
-        [HttpGet("User/getNote")]
+        [HttpGet("UserGetNote/{noteId}")]
 
         public async Task<ActionResult> GetNote( int noteId)
         {
@@ -103,9 +103,9 @@ namespace FundooNote.Controllers
         }
 
         [Authorize]
-        [HttpPut("User/updateNotes")]
+        [HttpPut("UpdateNotes/{noteId}")]
 
-        public async Task<ActionResult> UpdateNotes( NoteUpdateModel noteUpdateModel ,int noteId)
+        public async Task<ActionResult>  UpdateNotes( NoteUpdateModel noteUpdateModel ,int noteId)
         {
             try
             {
@@ -122,9 +122,9 @@ namespace FundooNote.Controllers
         }
 
         [Authorize]
-        [HttpDelete("User/DeleteNotes{NoteId}")]
+        [HttpDelete("UserDeleteNotes/{NoteId}")]
 
-        public async Task<ActionResult> DeleteNotes( long NoteId)
+        public async Task<ActionResult> DeleteNotes( int  NoteId)
         {
             try
             {
@@ -142,7 +142,7 @@ namespace FundooNote.Controllers
         }
 
         [Authorize]
-        [HttpPut("User/Reminder/{NoteId}")]
+        [HttpPut("UserReminder/{NoteId}")]
 
         public async Task<IActionResult> Reminder(int NoteId,ReminderUpdateModel reminderUpdateModel)
         {
