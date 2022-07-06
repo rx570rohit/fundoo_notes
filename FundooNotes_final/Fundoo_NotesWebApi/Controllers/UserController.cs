@@ -1,5 +1,4 @@
 ﻿using BuisnessLayer.Interface;
-
 using DatabaseLayer.User;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryLayer.Services;
@@ -7,6 +6,14 @@ using RepositoryLayer;
 using System;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using RepositoryLayer.Services.Entities;
+using System.Text;
+using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Fundoo_NotesWebApi.Controllers
 {
@@ -17,20 +24,22 @@ namespace Fundoo_NotesWebApi.Controllers
 
         IUserBL userBL;
         FundooContext fundooContext;
+       private readonly IDistributedCache distributedCache;
 
-        public UserController(IUserBL userBL, FundooContext fundooContext)
+        public UserController(IUserBL userBL, FundooContext fundooContext , IDistributedCache distributedCache)
         {
             this.userBL = userBL;
             this.fundooContext = fundooContext;
+            this.distributedCache = distributedCache;
         }
         [HttpPost("Register")]
         public IActionResult AddUser(UserPostModel userPostModel)
         {
             try
             {
-              
+
                 var user = fundooContext.Users.FirstOrDefault(u => u.Email == userPostModel.Email);
-                if(user != null)
+                if (user != null)
                 {
                     return this.BadRequest(new { success = false, message = "Email Already Exits" });
 
@@ -44,7 +53,38 @@ namespace Fundoo_NotesWebApi.Controllers
             {
                 throw e;
             }
+
         }
+
+        [HttpGet("GetAllUsersUsingRedisCache")]
+        public async Task<IActionResult> GetAllUsersUsingRedisCache()
+        {
+            var cacheKey = "UsersList";
+            string serializedUsersList;
+            var usersList = new List<User>();
+            var redisUsersList = await this.distributedCache.GetAsync(cacheKey);
+            if (redisUsersList != null)
+            {
+                serializedUsersList = Encoding.UTF8.GetString(redisUsersList);
+                usersList = JsonConvert.DeserializeObject<List<User>>(serializedUsersList);
+            }
+            else
+            {
+                usersList = await this.fundooContext.Users.ToListAsync();  
+                serializedUsersList = JsonConvert.SerializeObject(usersList);
+                redisUsersList = Encoding.UTF8.GetBytes(serializedUsersList);
+                var options = new DistributedCacheEntryOptions()
+                    .SetAbsoluteExpiration(DateTime.Now.AddMinutes(10))
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(2));
+                await this.distributedCache.SetAsync(cacheKey, redisUsersList, options);
+            }
+            
+
+            return this.Ok(new { status = 200, isSuccess = true, message = "All user are loaded", data = usersList });
+
+            //return this.Ok(usersList);
+        }
+
         [HttpPost("LogInEmailPassword/{Email}/{Password}")]
 
         public IActionResult LogIn(String Email,String Password)

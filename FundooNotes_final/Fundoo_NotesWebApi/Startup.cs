@@ -44,6 +44,21 @@ namespace Fundoo_NotesWebApi
             var secret = this.Configuration.GetSection("JwtConfig").GetSection("SecretKey").Value;
             var key = Encoding.ASCII.GetBytes(secret);
 
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+          .AddNewtonsoftJson(opt => {
+              opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+          });
+
+            services.AddStackExchangeRedisCache(options =>
+            {
+                
+                options.Configuration = "127.0.0.1:6379";
+                // options.Configuration = "localhost:6379";
+            });
+
+            services.AddMemoryCache();
+
+
             services.AddTransient<ILabelBL, LabelBL>();
             services.AddTransient<ILabelRL, LabelRL>();
 
@@ -56,7 +71,7 @@ namespace Fundoo_NotesWebApi
             services.AddTransient<INoteBL, NoteBL>();
             services.AddTransient<INoteRL, NoteRL>();
 
-          
+           
 
             services.AddAuthentication(x =>
             {
@@ -112,7 +127,6 @@ namespace Fundoo_NotesWebApi
                 });
             });
 
-            
         }
        
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
