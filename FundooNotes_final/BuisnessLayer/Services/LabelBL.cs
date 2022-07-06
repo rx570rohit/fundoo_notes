@@ -5,6 +5,7 @@ using RepositoryLayer.Services.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace BuisnessLayer.Services
 {
@@ -16,11 +17,11 @@ namespace BuisnessLayer.Services
             this.labelRL = labelRL;
         }
 
-        public bool AddLabel(LabelModel labelModel)
+        public async Task AddLabel(int UserId, int NoteId, string labelName)
         {
             try
             {
-                return labelRL.AddLabel(labelModel);   
+                await labelRL.AddLabel(UserId,NoteId,labelName);   
             }
             catch (Exception e)
             {
@@ -29,11 +30,13 @@ namespace BuisnessLayer.Services
             }
         }
 
-        public string DeleteLabel(int labelID, int NoteId)
+       
+
+        public async Task <IEnumerable<Label>> GetAllLabels(int UserId)
         {
             try
             {
-                return labelRL.DeleteLabel(labelID,NoteId);    
+                return await labelRL.GetAllLabels(UserId);
             }
             catch (Exception e)
             {
@@ -42,11 +45,11 @@ namespace BuisnessLayer.Services
             }
         }
 
-        public IEnumerable<Label> GetAllLabels()
+        public async Task<List<Label>> GetlabelByNotesId(int UserId,int NotesId)
         {
             try
             {
-                return this.labelRL.GetAllLabels();
+                return await labelRL.GetlabelByNotesId(UserId,NotesId);
             }
             catch (Exception e)
             {
@@ -55,29 +58,28 @@ namespace BuisnessLayer.Services
             }
         }
 
-        public List<Label> GetlabelByNotesId(int NotesId)
+       public async Task <string> UpdateLabel(int UserId,int NoteId, string LableName)
         {
             try
             {
-                return this.labelRL.GetlabelByNotesId(NotesId);
-            }
-            catch (Exception e)
-            {
-
-                throw e;
-            }
-        }
-
-        public string UpdateLabel(LabelModel labelModel, int labelID,int UserId)
-        {
-            try
-            {
-                return this.labelRL.UpdateLabel(labelModel, labelID,UserId);
+                return await labelRL.UpdateLabel(UserId,NoteId,LableName);
             }
             catch (Exception e)
             {
 
                 throw e; 
+            }
+       }
+        public async Task<string> DeleteLabel(int UserId,int NoteId)
+        {
+            try
+            {
+                return await labelRL.DeleteLabel(UserId, NoteId);
+            }
+            catch (Exception e)
+            {
+
+                throw e;
             }
         }
     }

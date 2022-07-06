@@ -21,27 +21,20 @@ namespace RepositoryLayer.Migrations
 
             modelBuilder.Entity("RepositoryLayer.Services.Entities.Label", b =>
                 {
-                    b.Property<int>("LabelID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("LabelName")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.Property<int>("NoteId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("LabelName")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("LabelID");
+                    b.HasKey("UserId", "NoteId");
 
                     b.HasIndex("NoteId");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Labels");
+                    b.ToTable("Label");
                 });
 
             modelBuilder.Entity("RepositoryLayer.Services.Entities.Note", b =>

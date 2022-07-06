@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using RepositoryLayer.Services;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Fundoo_NotesWebApi.Controllers
 {
@@ -22,29 +23,28 @@ namespace Fundoo_NotesWebApi.Controllers
             this.fundooContext = fundooContext;
         }
         [Authorize]
-        [HttpPost("user/AddLabel")]
+        [HttpPost("AddLabel/{NoteId}/{LabelName}")]
 
       
-        public IActionResult AddLabel(LabelModel labelModel)  
+        public async Task<IActionResult> AddLabel(int NoteId,string LabelName)  
         {
             try
             {
                 var currentUser = HttpContext.User;
 
-                long userid = Convert.ToInt32(currentUser.Claims.FirstOrDefault(e => e.Type == "UserId").Value);
-                var labelNote = this.fundooContext.Notes.Where(x => x.NoteId == labelModel.NoteId).SingleOrDefault();
-                if (labelNote.UserId == userid)
-                {
-                    var result = this.labelBl.AddLabel(labelModel);
-                    if (result)
-                    {
-                        return this.Ok(new { status = 200, isSuccess = true, Message = "Label created successfully!", data = result });
-                    }
-                    return this.BadRequest(new { status = 400, isSuccess = false, message = "Label not created" });
-                }
+                int userid = Convert.ToInt32(currentUser.Claims.FirstOrDefault(e => e.Type == "UserId").Value);
+                var Label = fundooContext.Label.Where(x => x.UserId == userid && x.NoteId == NoteId).FirstOrDefault();
 
-                return this.BadRequest(new { status = 400, isSuccess = false, message = "Label not created" });
-            }
+                if (Label != null)
+                {
+                    return this.BadRequest(new { status = 301, isSuccess = false, Message = "Enter Distinct NoteId" });
+
+                }
+                await this.labelBl.AddLabel(userid, NoteId, LabelName);
+
+                return this.Ok(new { status = 200, isSuccess = true, Message = "Label created successfully!" });
+
+            }   
             catch (Exception e)
             {
                 throw e;
@@ -52,11 +52,14 @@ namespace Fundoo_NotesWebApi.Controllers
         }
 
         [HttpGet("GetAllLabels")]
-        public IActionResult GetAllLabels()
+        public async Task<IActionResult> GetAllLabels()
         {
             try
             {
-                var labels = this.labelBl.GetAllLabels();
+                var currentUser = HttpContext.User;
+
+                int userId = Convert.ToInt32(currentUser.Claims.FirstOrDefault(e => e.Type == "UserId").Value);
+                var labels = await labelBl.GetAllLabels(userId);
                 if (labels != null)
                 {
                     return this.Ok(new { status = 200, isSuccess = true, Message = "lables are ready", data = labels });
@@ -72,17 +75,17 @@ namespace Fundoo_NotesWebApi.Controllers
             }
         }
 
-        [HttpGet("GetlabelByNotesId/{notesId}")]
+        [HttpGet("GetlabelsByNotesId/{notesId}")]
 
-        public IActionResult GetlabelByNotesId(int notesId)
+       public async Task<IActionResult> GetlabelByNotesId(int notesId)
         {
             try
             {
                 var currentUser = HttpContext.User;
 
                 int userId = Convert.ToInt32(currentUser.Claims.FirstOrDefault(X => X.Type == "UserId").Value);
-                var labels = this.labelBl.GetlabelByNotesId(notesId);
-                if (labels != null)
+                var labels = await labelBl.GetlabelByNotesId(userId,notesId);
+                if (labels.Count != 0)
                 {
                     return this.Ok(new { status = 200, isSuccess = true, message = "  label found Successfully", data = labels });
                 }
@@ -98,14 +101,15 @@ namespace Fundoo_NotesWebApi.Controllers
         }
 
         [HttpPut("UpdateLable")]
-        public IActionResult UpdateLabel(LabelModel labelModel, int labelID)
+        public async Task<IActionResult> UpdateLabel(int NoteId,string LabelName)
         {
             try
             {
                 var currentUser = HttpContext.User;
 
                 int userId = Convert.ToInt32(currentUser.Claims.FirstOrDefault(X => X.Type == "UserId").Value);
-                var result = this.labelBl.UpdateLabel(labelModel, labelID, userId);
+
+                var result = await labelBl.UpdateLabel(userId,NoteId,LabelName);
                 if (result != null)
                 {
                     return this.Ok(new { status = 200, isSuccess = true, message = "Label Updated Successfully", data = result });
@@ -123,17 +127,22 @@ namespace Fundoo_NotesWebApi.Controllers
 
 
         [HttpDelete("DeleteLable")]
-        public IActionResult DeleteLabel(int labelId,int NoteId)
+        public async Task<IActionResult> DeleteLabel(int NoteId)
         {
             try
             {
                 var currentUser = HttpContext.User;
 
-                int userid = Convert.ToInt32(currentUser.Claims.FirstOrDefault(X => X.Type == "UserId").Value);
-                var delete = this.labelBl.DeleteLabel(labelId,NoteId);
+                int userId = Convert.ToInt32(currentUser.Claims.FirstOrDefault(X => X.Type == "UserId").Value);
+                var delete = await labelBl.DeleteLabel(userId,NoteId);
                 if (delete != null)
                 {
-                    return this.Ok(new { status = 200, isSuccess = true, message = "Label Deleted Successfully" });
+                    return this.Ok(new
+                    {
+                        status = 200,
+                        isSuccess = true,
+                        message = "Label Deleted Successfully"
+                    });
                 }
                 else
                 {
