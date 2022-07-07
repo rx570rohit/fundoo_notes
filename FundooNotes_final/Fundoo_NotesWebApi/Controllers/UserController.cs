@@ -56,35 +56,6 @@ namespace Fundoo_NotesWebApi.Controllers
 
         }
 
-        [HttpGet("GetAllUsersUsingRedisCache")]
-        public async Task<IActionResult> GetAllUsersUsingRedisCache()
-        {
-            var cacheKey = "UsersList";
-            string serializedUsersList;
-            var usersList = new List<User>();
-            var redisUsersList = await this.distributedCache.GetAsync(cacheKey);
-            if (redisUsersList != null)
-            {
-                serializedUsersList = Encoding.UTF8.GetString(redisUsersList);
-                usersList = JsonConvert.DeserializeObject<List<User>>(serializedUsersList);
-            }
-            else
-            {
-                usersList = await this.fundooContext.Users.ToListAsync();  
-                serializedUsersList = JsonConvert.SerializeObject(usersList);
-                redisUsersList = Encoding.UTF8.GetBytes(serializedUsersList);
-                var options = new DistributedCacheEntryOptions()
-                    .SetAbsoluteExpiration(DateTime.Now.AddMinutes(10))
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(2));
-                await this.distributedCache.SetAsync(cacheKey, redisUsersList, options);
-            }
-            
-
-            return this.Ok(new { status = 200, isSuccess = true, message = "All user are loaded", data = usersList });
-
-            //return this.Ok(usersList);
-        }
-
         [HttpPost("LogInEmailPassword/{Email}/{Password}")]
 
         public IActionResult LogIn(String Email,String Password)

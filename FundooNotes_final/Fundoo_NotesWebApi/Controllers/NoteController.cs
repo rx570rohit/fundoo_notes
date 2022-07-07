@@ -77,12 +77,26 @@ namespace FundooNote.Controllers
             }
 
         }
+        [Authorize]
         [HttpGet("GetAllNotesUsingRedisCache")]
         public async Task<IActionResult> GetAllNotesUsingRedisCache()
         {
+            var currentUser = HttpContext.User;
+            int userId = Convert.ToInt32(currentUser.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
             var cacheKey = "NotesList";
             string serializedNotesList;
-            var notesList = new List<Note>();
+            //   var notesList = new List<Note>();
+
+            var note = fundooContext.Notes.FirstOrDefault(u => u.UserId == userId);
+            if (note == null)
+            {
+
+                return this.BadRequest(new { success = true, message = "Note Doesn't Exits" });
+
+            }
+
+            var notesList = await this.noteBL.GetAllNote(userId);
+
             var redisNotesList = await this.distributedCache.GetAsync(cacheKey);
             if (redisNotesList != null)
             {

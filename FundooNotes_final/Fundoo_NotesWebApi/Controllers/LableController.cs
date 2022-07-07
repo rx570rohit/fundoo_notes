@@ -83,31 +83,44 @@ namespace Fundoo_NotesWebApi.Controllers
                 return this.BadRequest(new { Status = 401, isSuccess = false, message = e.InnerException.Message });
             }
         }
+        [Authorize]
         [HttpGet("GetAllLabelsUsingRedisCache")]
         public async Task<IActionResult> GetAllLabelUsingRedisCache()
         {
             var cacheKey = "LabelsList";
+
             string serializedLabelsList;
-            var labelsList = new List<Label>();
+            var currentUser = HttpContext.User;
+            int userId = Convert.ToInt32(currentUser.Claims.FirstOrDefault(e => e.Type == "UserId").Value);
+            var labelsList = await labelBl.GetAllLabels(userId);
+
             var redisLabelsList = await this.distributedCache.GetAsync(cacheKey);
-            if (redisLabelsList != null)
+
+            if (labelsList != null)
             {
-                serializedLabelsList = Encoding.UTF8.GetString(redisLabelsList);
-                labelsList = JsonConvert.DeserializeObject<List<Label>>(serializedLabelsList);
+
+                if (redisLabelsList != null)
+                {
+                    serializedLabelsList = Encoding.UTF8.GetString(redisLabelsList);
+                    labelsList = JsonConvert.DeserializeObject<List<Label>>(serializedLabelsList);
+                }
+                else
+                {
+                    labelsList = await this.fundooContext.Label.ToListAsync();  // Comes from Microsoft.EntityFrameworkCore Namespace
+                    serializedLabelsList = JsonConvert.SerializeObject(labelsList);
+                    redisLabelsList = Encoding.UTF8.GetBytes(serializedLabelsList);
+                    var options = new DistributedCacheEntryOptions()
+                        .SetAbsoluteExpiration(DateTime.Now.AddMinutes(10))
+                        .SetSlidingExpiration(TimeSpan.FromMinutes(2));
+                    await this.distributedCache.SetAsync(cacheKey, redisLabelsList, options);
+                }
+                var labels = labelsList;
+                return this.Ok(new { status = 200, isSuccess = true, message = "All lables are loaded", data = labels });
             }
             else
             {
-                labelsList = await this.fundooContext.Label.ToListAsync();  // Comes from Microsoft.EntityFrameworkCore Namespace
-                serializedLabelsList = JsonConvert.SerializeObject(labelsList);
-                redisLabelsList = Encoding.UTF8.GetBytes(serializedLabelsList);
-                var options = new DistributedCacheEntryOptions()
-                    .SetAbsoluteExpiration(DateTime.Now.AddMinutes(10))
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(2));
-                await this.distributedCache.SetAsync(cacheKey, redisLabelsList, options);
+                return this.BadRequest(new { Status = 401, isSuccess = false, message = "labelList Not found " });
             }
-            var labels =labelsList;
-            return this.Ok(new { status = 200, isSuccess = true, message = "All lables are loaded", data = labels });
-
 
         }
 
