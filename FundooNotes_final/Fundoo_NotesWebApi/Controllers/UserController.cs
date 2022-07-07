@@ -12,8 +12,7 @@ using RepositoryLayer.Services.Entities;
 using System.Text;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.Memory;
+
 
 namespace Fundoo_NotesWebApi.Controllers
 {
@@ -24,13 +23,12 @@ namespace Fundoo_NotesWebApi.Controllers
 
         IUserBL userBL;
         FundooContext fundooContext;
-       private readonly IDistributedCache distributedCache;
 
-        public UserController(IUserBL userBL, FundooContext fundooContext , IDistributedCache distributedCache)
+        public UserController(IUserBL userBL, FundooContext fundooContext)
         {
             this.userBL = userBL;
             this.fundooContext = fundooContext;
-            this.distributedCache = distributedCache;
+            
         }
         [HttpPost("Register")]
         public IActionResult AddUser(UserPostModel userPostModel)

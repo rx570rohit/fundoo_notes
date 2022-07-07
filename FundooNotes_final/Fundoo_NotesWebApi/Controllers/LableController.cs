@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RepositoryLayer.Services;
 using RepositoryLayer.Services.Entities;
@@ -23,13 +24,17 @@ namespace Fundoo_NotesWebApi.Controllers
 
         FundooContext fundooContext;
         private readonly IDistributedCache distributedCache;
+        IConfiguration Configuration;
+        private string cacheKey;
 
-
-        public LableController(ILabelBL labelBl, FundooContext fundooContext, IDistributedCache distributedCache)
+        public LableController(ILabelBL labelBl, FundooContext fundooContext, IDistributedCache distributedCache , IConfiguration configuration)
         {
             this.labelBl = labelBl;
             this.fundooContext = fundooContext;
-            this.distributedCache = distributedCache;   
+            this.distributedCache = distributedCache; 
+            this.Configuration = configuration;
+            cacheKey = configuration.GetSection("redis").GetSection("cacheKey").Value;
+
         }
         [Authorize]
         [HttpPost("AddLabel/{NoteId}/{LabelName}")]
@@ -87,7 +92,7 @@ namespace Fundoo_NotesWebApi.Controllers
         [HttpGet("GetAllLabelsUsingRedisCache")]
         public async Task<IActionResult> GetAllLabelUsingRedisCache()
         {
-            var cacheKey = "LabelsList";
+           // cacheKey = "LabelsList";
 
             string serializedLabelsList;
             var currentUser = HttpContext.User;

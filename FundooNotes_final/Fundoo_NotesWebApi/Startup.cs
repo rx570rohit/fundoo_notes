@@ -43,11 +43,9 @@ namespace Fundoo_NotesWebApi
 
             var secret = this.Configuration.GetSection("JwtConfig").GetSection("SecretKey").Value;
             var key = Encoding.ASCII.GetBytes(secret);
+            var cacheKey = Configuration.GetSection("redis").GetSection("cacheKey").Value;
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
-          .AddNewtonsoftJson(opt => {
-              opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-          });
+
 
             services.AddStackExchangeRedisCache(options =>
             {

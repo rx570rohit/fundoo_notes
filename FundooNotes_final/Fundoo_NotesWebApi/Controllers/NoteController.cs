@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RepositoryLayer.Services;
 using RepositoryLayer.Services.Entities;
@@ -23,12 +24,16 @@ namespace FundooNote.Controllers
         INoteBL noteBL;
         FundooContext fundooContext;
         private readonly IDistributedCache distributedCache;
+        private string cacheKey;
+        IConfiguration configuraton;
 
-        public NoteController(INoteBL noteBL, FundooContext fundooContext, IDistributedCache distributedCache)
+        public NoteController(INoteBL noteBL, FundooContext fundooContext, IDistributedCache distributedCache,IConfiguration configuration)
         {
             this.noteBL = noteBL;
             this.fundooContext = fundooContext;
-            this.distributedCache = distributedCache;   
+            this.distributedCache = distributedCache;
+            this.configuraton = configuration;
+            cacheKey = configuraton.GetSection("redis").GetSection("CacheKey").Value;
         }
 
         [Authorize]
@@ -83,9 +88,8 @@ namespace FundooNote.Controllers
         {
             var currentUser = HttpContext.User;
             int userId = Convert.ToInt32(currentUser.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-            var cacheKey = "NotesList";
+           // var cacheKey = "NotesList";
             string serializedNotesList;
-            //   var notesList = new List<Note>();
 
             var note = fundooContext.Notes.FirstOrDefault(u => u.UserId == userId);
             if (note == null)
