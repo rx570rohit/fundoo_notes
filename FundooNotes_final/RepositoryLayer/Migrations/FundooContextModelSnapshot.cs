@@ -32,8 +32,6 @@ namespace RepositoryLayer.Migrations
 
                     b.HasKey("UserId", "NoteId");
 
-                    b.HasIndex("NoteId");
-
                     b.ToTable("Label");
                 });
 
@@ -110,25 +108,6 @@ namespace RepositoryLayer.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("RepositoryLayer.Services.Entities.Label", b =>
-                {
-                    b.HasOne("RepositoryLayer.Services.Entities.Note", "note")
-                        .WithMany()
-                        .HasForeignKey("NoteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RepositoryLayer.Services.Entities.User", "user")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("note");
-
-                    b.Navigation("user");
                 });
 #pragma warning restore 612, 618
         }

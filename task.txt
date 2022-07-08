@@ -37,3 +37,18 @@ regex format(date time)
   "description": "Asp.Net",
   "colour": "Green"
 }
+
+
+
+
+await from ed in fundooContext.Label.Where(x => x.UserId == UserId)
+
+                                   join d in fundooContext.Notes on ed.NoteId equals d.NoteId
+
+                                   select new
+
+                                   {
+                                       LabelName = ed.LabelName,
+                                       UserId = ed.UserId,
+                                       NoteId = ed.NoteId,
+                                   };

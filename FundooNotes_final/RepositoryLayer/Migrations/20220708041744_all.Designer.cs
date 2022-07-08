@@ -10,8 +10,8 @@ using RepositoryLayer.Services;
 namespace RepositoryLayer.Migrations
 {
     [DbContext(typeof(FundooContext))]
-    [Migration("20220706035150_All")]
-    partial class All
+    [Migration("20220708041744_all")]
+    partial class all
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,18 +23,16 @@ namespace RepositoryLayer.Migrations
 
             modelBuilder.Entity("RepositoryLayer.Services.Entities.Label", b =>
                 {
-                    b.Property<string>("LabelName")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.Property<int>("NoteId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("LabelName")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("NoteId");
-
-                    b.HasIndex("UserId");
+                    b.HasKey("UserId", "NoteId");
 
                     b.ToTable("Label");
                 });
@@ -112,25 +110,6 @@ namespace RepositoryLayer.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("RepositoryLayer.Services.Entities.Label", b =>
-                {
-                    b.HasOne("RepositoryLayer.Services.Entities.Note", "note")
-                        .WithMany()
-                        .HasForeignKey("NoteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RepositoryLayer.Services.Entities.User", "user")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("note");
-
-                    b.Navigation("user");
                 });
 #pragma warning restore 612, 618
         }

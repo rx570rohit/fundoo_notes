@@ -1,4 +1,5 @@
 ﻿using BuisnessLayer.Interface;
+using DatabaseLayer.Label;
 using DatabaseLayer.Lable;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -88,6 +89,28 @@ namespace Fundoo_NotesWebApi.Controllers
                 return this.BadRequest(new { Status = 401, isSuccess = false, message = e.InnerException.Message });
             }
         }
+        [Authorize]
+        [HttpGet("GetAllLabelsUsingJoins")]
+
+        public async Task<IActionResult> GetAllLabelsByLinqJoins()
+        {
+            try
+            {
+                var currentUser = HttpContext.User;
+                var userId = Convert.ToInt32(currentUser.Claims.FirstOrDefault(x => x.Type == "UserId").Value);
+                var labels = await labelBl.GetAllLabelsByLinqJoins(userId);
+                if (labels != null)
+                {
+                    return this.Ok(new { status = 200, success = true, message = "All Label are ready", data = labels });
+                }
+                else { return this.NotFound(new { success = false, message = "No Label found" }); }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+         }
+
         [Authorize]
         [HttpGet("GetAllLabelsUsingRedisCache")]
         public async Task<IActionResult> GetAllLabelUsingRedisCache()

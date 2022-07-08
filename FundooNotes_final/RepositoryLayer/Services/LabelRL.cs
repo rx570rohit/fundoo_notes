@@ -1,4 +1,5 @@
-﻿using DatabaseLayer.Lable;
+﻿using DatabaseLayer.Label;
+using DatabaseLayer.Lable;
 using Microsoft.EntityFrameworkCore;
 using RepositoryLayer.Interfaces;
 using RepositoryLayer.Services.Entities;
@@ -25,7 +26,7 @@ namespace RepositoryLayer.Services
             {
 
                 var label1 = await fundooContext.Label.Where(c => c.UserId == userid && c.NoteId == noteid).FirstOrDefaultAsync();
-                if (label1 !=null)
+                if (label1==null)
                 {
 
 
@@ -52,6 +53,60 @@ namespace RepositoryLayer.Services
             {
                 return await fundooContext.Label.Where(x=>x.UserId==UserId).ToListAsync();
                 
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task<List<LabelResponseModel>> GetAllLabelsByLinqJoins(int UserId)
+        {
+            try
+            {
+                var label = fundooContext.Label.FirstOrDefault(u => u.UserId == UserId);
+                if (label == null)
+                {
+                    return null;
+                }
+
+
+               var res = await ( from user in fundooContext.Users 
+                      join notes in fundooContext.Notes on user.UserId equals notes.UserId
+                      join labels in fundooContext.Label  on notes.NoteId equals labels.NoteId   
+
+                 select new LabelResponseModel
+                 {
+                    UserId = user.UserId,
+                    NoteId = notes.NoteId,
+                    Title = notes.Title,
+                    FirstName=user.FirstName,
+                    LastName=user.LastName,
+                    Email=user.Email, 
+                    Description = notes.Description,
+                    LabelName   = labels.LabelName,
+                  }).ToListAsync();
+
+                /*  return await fundooContext.Label
+                       .Where(l => l.UserId == UserId)
+
+                       .Join(fundooContext.Notes
+                       .Where(n => n.NoteId == label.NoteId),
+
+                       l => l.UserId,
+                       n => n.NoteId,
+
+                       (l, n) => new LabelResponseModel
+                       {
+                           UserId = l.UserId,
+                           NoteId = n.NoteId,
+                           Title =  n.Title,
+                           Description = n.Description,
+                         //  LabelName   = l.LabelName,
+
+                       }).ToListAsync();
+                 */
+                return res; 
             }
             catch (Exception e)
             {

@@ -16,10 +16,8 @@ namespace RepositoryLayer.Services.Entities
 
         [ForeignKey("user")]
         public int UserId { get; set; }
-        public virtual User user { get; set; }
 
         [ForeignKey("note")]
         public int NoteId { get; set; }
-        public virtual Note note { get; set; }
     }
 }

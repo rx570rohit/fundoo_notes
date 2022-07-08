@@ -1,4 +1,5 @@
 ﻿using BuisnessLayer.Interface;
+using DatabaseLayer.Label;
 using DatabaseLayer.Lable;
 using RepositoryLayer.Interfaces;
 using RepositoryLayer.Services.Entities;
@@ -44,6 +45,12 @@ namespace BuisnessLayer.Services
                 throw e;
             }
         }
+
+        public async Task<List<LabelResponseModel>> GetAllLabelsByLinqJoins(int UserId)
+        {
+           return await this.labelRL.GetAllLabelsByLinqJoins(UserId); 
+        }
+
 
         public async Task<List<Label>> GetlabelByNotesId(int UserId,int NotesId)
         {
