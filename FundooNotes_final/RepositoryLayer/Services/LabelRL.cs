@@ -46,20 +46,6 @@ namespace RepositoryLayer.Services
             }
         }
 
-
-        public async Task<IEnumerable<Label>> GetAllLabels(int UserId)
-        {
-            try
-            {
-                return await fundooContext.Label.Where(x=>x.UserId==UserId).ToListAsync();
-                
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
-        }
-
         public async Task<List<LabelResponseModel>> GetAllLabelsByLinqJoins(int UserId)
         {
             try
@@ -118,12 +104,13 @@ namespace RepositoryLayer.Services
         {
             try
             {
+
                 return await fundooContext.Label.Where(x => x.NoteId == NotesId && x.UserId==UserId).ToListAsync();
              
             }
             catch (Exception e)
             {
-                throw e; ;
+                throw e; 
             }
         }
 

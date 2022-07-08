@@ -66,29 +66,7 @@ namespace Fundoo_NotesWebApi.Controllers
             }
         }
 
-        [HttpGet("GetAllLabels")]
-        public async Task<IActionResult> GetAllLabels()
-        {
-            try
-            {
-                var currentUser = HttpContext.User;
-
-                int userId = Convert.ToInt32(currentUser.Claims.FirstOrDefault(e => e.Type == "UserId").Value);
-                var labels = await labelBl.GetAllLabels(userId);
-                if (labels != null)
-                {
-                    return this.Ok(new { status = 200, isSuccess = true, Message = "lables are ready", data = labels });
-                }
-                else
-                {
-                    return this.NotFound(new { isSuccess = false, Message = "No label found" });
-                }
-            }
-            catch (Exception e)
-            {
-                return this.BadRequest(new { Status = 401, isSuccess = false, message = e.InnerException.Message });
-            }
-        }
+       
         [Authorize]
         [HttpGet("GetAllLabelsUsingJoins")]
 
@@ -111,46 +89,7 @@ namespace Fundoo_NotesWebApi.Controllers
             }
          }
 
-        [Authorize]
-        [HttpGet("GetAllLabelsUsingRedisCache")]
-        public async Task<IActionResult> GetAllLabelUsingRedisCache()
-        {
-           // cacheKey = "LabelsList";
-
-            string serializedLabelsList;
-            var currentUser = HttpContext.User;
-            int userId = Convert.ToInt32(currentUser.Claims.FirstOrDefault(e => e.Type == "UserId").Value);
-            var labelsList = await labelBl.GetAllLabels(userId);
-
-            var redisLabelsList = await this.distributedCache.GetAsync(cacheKey);
-
-            if (labelsList != null)
-            {
-
-                if (redisLabelsList != null)
-                {
-                    serializedLabelsList = Encoding.UTF8.GetString(redisLabelsList);
-                    labelsList = JsonConvert.DeserializeObject<List<Label>>(serializedLabelsList);
-                }
-                else
-                {
-                    labelsList = await this.fundooContext.Label.ToListAsync();  // Comes from Microsoft.EntityFrameworkCore Namespace
-                    serializedLabelsList = JsonConvert.SerializeObject(labelsList);
-                    redisLabelsList = Encoding.UTF8.GetBytes(serializedLabelsList);
-                    var options = new DistributedCacheEntryOptions()
-                        .SetAbsoluteExpiration(DateTime.Now.AddMinutes(10))
-                        .SetSlidingExpiration(TimeSpan.FromMinutes(2));
-                    await this.distributedCache.SetAsync(cacheKey, redisLabelsList, options);
-                }
-                var labels = labelsList;
-                return this.Ok(new { status = 200, isSuccess = true, message = "All lables are loaded", data = labels });
-            }
-            else
-            {
-                return this.BadRequest(new { Status = 401, isSuccess = false, message = "labelList Not found " });
-            }
-
-        }
+      
 
 
         [HttpGet("GetlabelsByNotesId/{notesId}")]
@@ -169,7 +108,7 @@ namespace Fundoo_NotesWebApi.Controllers
                 }
                 else
                 {
-                    return this.NotFound(new { isSuccess = false, message = "label not Found" });
+                    return this.NotFound(new { isSuccess = false, message = "Label not Found" });
                 }
             }
             catch (Exception e)
@@ -178,7 +117,7 @@ namespace Fundoo_NotesWebApi.Controllers
             }
         }
 
-        [HttpPut("{NoteId}/{LabelName}")]
+        [HttpPut("UpdateLabel/{NoteId}/{LabelName}")]
         public async Task<IActionResult> UpdateLabel(int NoteId,string LabelName)
         {
             try

@@ -31,20 +31,6 @@ namespace BuisnessLayer.Services
             }
         }
 
-       
-
-        public async Task <IEnumerable<Label>> GetAllLabels(int UserId)
-        {
-            try
-            {
-                return await labelRL.GetAllLabels(UserId);
-            }
-            catch (Exception e)
-            {
-
-                throw e;
-            }
-        }
 
         public async Task<List<LabelResponseModel>> GetAllLabelsByLinqJoins(int UserId)
         {

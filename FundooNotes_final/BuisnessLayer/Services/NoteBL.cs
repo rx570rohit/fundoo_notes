@@ -71,11 +71,11 @@ namespace BusinessLayer.Services
                 throw;
             }
         }
-        public async Task DeleteNotes(int UserId,long NoteId)
+        public async Task<string> DeleteNotes(int UserId,long NoteId)
         {
             try
             {
-                 await this.noteRL.DeleteNotes(UserId,NoteId);
+                 return await this.noteRL.DeleteNotes(UserId,NoteId);
             }
             catch (Exception e)
             {
@@ -83,11 +83,11 @@ namespace BusinessLayer.Services
             }
         }
 
-        public async Task Reminder(int UserId, int NoteId, DateTime dateTime)
+        public async Task<string> Reminder(int UserId, int NoteId, DateTime dateTime)
         {
             try
             {
-                await this.noteRL.Reminder(UserId, NoteId, dateTime);
+                return await this.noteRL.Reminder(UserId, NoteId, dateTime);
             }
             catch (Exception e)
             {
@@ -107,11 +107,11 @@ namespace BusinessLayer.Services
                 throw e;
             }
         }
-        public async Task PinNote(int UserId, int noteId)
+        public async Task<string> PinNote(int UserId, int noteId)
         {
             try
             {
-                await this.noteRL.PinNote(UserId, noteId);
+                return await this.noteRL.PinNote(UserId, noteId);
             }
             catch (Exception e)
             {
@@ -124,6 +124,32 @@ namespace BusinessLayer.Services
             try
             {
                 await this.noteRL.ChangeNoteColour(userId, noteId, colour);
+
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
+        }
+
+        public async Task<string> UnArchiveNote(int userId, int noteId)
+        {
+            try
+            {
+              return await this.noteRL.UnArchiveNote(userId,noteId);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }       
+        }
+
+        public async Task<string> TrashNote(int userId,int noteId)
+        {
+            try
+            {
+               return await this.noteRL.TrashNote(userId, noteId);
 
             }
             catch (Exception e)

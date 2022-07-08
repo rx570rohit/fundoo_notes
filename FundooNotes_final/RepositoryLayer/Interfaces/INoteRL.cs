@@ -14,13 +14,15 @@ namespace RepositoryLayer.Interfaces
         Task<List<Note>> GetAllNote(int userId);
         Task <List<Note>> GetNote(int UserId,int NotesId);
         Task<String> UpdateNote(int UserId,NoteUpdateModel noteUpdateModel, long noteId);
-        Task DeleteNotes(int UserId,long NoteId);
+        Task<string> DeleteNotes(int UserId,long NoteId);
 
-        Task Reminder(int UserId, int NoteId, DateTime dateTime);
-        Task PinNote(int UserId, int noteId);
+        Task<string> Reminder(int UserId, int NoteId, DateTime dateTime);
+        Task<string> PinNote(int UserId, int noteId);
 
         Task ArchiveNote(int UserId, int noteId);
         Task ChangeNoteColour(int userId, int noteId, String Colour);
+        Task<string> UnArchiveNote(int userId, int noteId);
+        Task<string> TrashNote(int userId, int notesId);
 
 
     }

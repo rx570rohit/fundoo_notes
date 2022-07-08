@@ -16,14 +16,18 @@ namespace BusinessLayer.Interfaces
         Task <List<Note>> GetNote(int NotesId ,int userId);
 
         Task<string> UpdateNote(int  userId ,NoteUpdateModel  noteUpdateModel, int NoteId);
-        Task DeleteNotes(int userId,long NoteId);
+        Task<string> DeleteNotes(int userId,long NoteId);
 
-        Task Reminder(int userId, int NoteId, DateTime dateTime);
+        Task<string> Reminder(int userId, int NoteId, DateTime dateTime);
 
-        Task PinNote(int userId, int noteId);
+        Task<string> PinNote(int userId, int noteId);
         Task ArchiveNote(int userId, int noteId);
 
         Task ChangeNoteColour(int userId, int noteId,string colour);
+
+        Task<string> UnArchiveNote(int userId,int noteId);
+
+        Task<string> TrashNote(int userId,int notesId);
 
     }
 }

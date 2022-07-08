@@ -90,7 +90,7 @@ namespace RepositoryLayer.Services
         {
             try
             {
-                var update = fundooContext.Notes.Where(X => X.NoteId == noteId && X.UserId==UserId).FirstOrDefault();
+                var update = fundooContext.Notes.Where(X => X.NoteId == noteId && X.UserId == UserId).FirstOrDefault();
                 if (update != null && update.NoteId == noteId)
                 {
                     update.Title = noteUpdateModel.Title;
@@ -98,12 +98,12 @@ namespace RepositoryLayer.Services
                     update.ModifiedDate = DateTime.Now;
                     update.Colour = noteUpdateModel.Colour;
 
-                 await this.fundooContext.SaveChangesAsync();
-                    return "Note is Modified";
+                    await this.fundooContext.SaveChangesAsync();
+                    return "Note is Modified successfully";
                 }
                 else
                 {
-                    return "Note Not Modified";
+                    return null;
                 }
             }
             catch (Exception)
@@ -112,61 +112,71 @@ namespace RepositoryLayer.Services
             }
         }
 
-        public async Task DeleteNotes(int UserId, long NoteId)
+        public async Task<string> DeleteNotes(int UserId, long NoteId)
         {
             try
             {
                 var deleteNote = fundooContext.Notes.Where(X => X.NoteId == NoteId && X.UserId == UserId).SingleOrDefault();
                 if (deleteNote != null)
-
-                    fundooContext.Notes.Remove(deleteNote);
-               await this.fundooContext.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-
-        }
-
-        public async Task Reminder(int UserId, int NoteId, DateTime dateTime)
-        {
-            try
-            {
-                var reminder = fundooContext.Notes.Where(x => x.NoteId == NoteId && x.UserId == UserId).FirstOrDefault();
-
-                reminder.Reminder = dateTime;
-
-              await this.fundooContext.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-
-                throw e;
-            }
-        }
-
-
-        public async Task PinNote(int UserId, int noteId)
-        {
-            try
-            {
-                var note = fundooContext.Notes.Where(x => x.UserId == UserId && x.NoteId == noteId).FirstOrDefault();
-                if (note != null)
                 {
-                    if (note.IsTrash == false)
-                    {
-                        if (note.IsPin == false)
-                        {
-                            note.IsPin = true;
-                        }
-                        else
-                        {
-                            note.IsPin = false;
-                        }
-                    }
+                    fundooContext.Notes.Remove(deleteNote);
+                    await this.fundooContext.SaveChangesAsync();
+                    return "Note is Deleted successfully";
                 }
-                await fundooContext.SaveChangesAsync();
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+        }
+
+        public async Task<string> Reminder(int userId, int noteId, DateTime dateTime)
+        {
+            try
+            {
+                var reminder = fundooContext.Notes.Where(x => x.NoteId == noteId && x.UserId == userId).FirstOrDefault();
+                if (reminder != null)
+                {
+                    reminder.Reminder = dateTime;
+                    await this.fundooContext.SaveChangesAsync();
+                    return "Reminder Set Successfull for date:" + dateTime.Date+" And Time : "+dateTime.TimeOfDay;
+                }
+                else 
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
+        }
+
+
+        public async Task<string> PinNote(int userId, int noteId)
+        {
+            try
+            {
+                var pined= this.fundooContext.Notes.Where(p => p.NoteId == noteId && p.UserId == userId).FirstOrDefault();
+                if (pined.IsPin == true)
+                {
+                    pined.IsPin= false;
+                    await this.fundooContext.SaveChangesAsync();
+                    return "note PinnedNote Successfully";
+                }
+                else
+                {
+                    pined.IsPin = true;
+                    await this.fundooContext.SaveChangesAsync();
+                    return "note UnPinned Successfully";
+                }
+
             }
             catch (Exception e)
             {
@@ -201,7 +211,7 @@ namespace RepositoryLayer.Services
             }
         }
 
-        public async Task ChangeNoteColour(int userId, int noteId,string colour)
+        public async Task ChangeNoteColour(int userId, int noteId, string colour)
         {
             try
             {
@@ -221,6 +231,60 @@ namespace RepositoryLayer.Services
                 throw e;
             }
         }
+
+        public async Task<string> UnArchiveNote(int userId, int noteId)
+        {
+
+            try
+            {
+                var response = this.fundooContext.Notes.Where(a => a.NoteId == noteId && a.IsArchive == true && a.UserId==userId).SingleOrDefault();
+                if (response != null)
+                {
+                    response.IsArchive = false;
+                    await this.fundooContext.SaveChangesAsync();
+                    return "Note is UnArchived successfully";
+                }
+                else if (this.fundooContext.Notes.Where(a => a.NoteId == noteId && a.IsArchive == false && a.UserId == userId).SingleOrDefault()!=null)
+                {
+                    return "Note is already UnArchived";
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public async Task<string> TrashNote(int userId, int noteId)
+        {
+            try
+            { 
+               var trashed = this.fundooContext.Notes.Where(p => p.NoteId == noteId && p.UserId==userId).FirstOrDefault();
+                  if (trashed.IsTrash == true)
+                  {
+                        trashed.IsTrash = false;
+                        await this.fundooContext.SaveChangesAsync();
+                        return "notes recoverd";
+                  }
+                  else
+                  {
+                        trashed.IsTrash = true;
+                        await this.fundooContext.SaveChangesAsync();
+                        return "note is in trashed";
+                  }
+                
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
     }
 }
+
 
