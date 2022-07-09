@@ -57,13 +57,14 @@ namespace RepositoryLayer.Services
                 }
 
 
-               var res = await ( from user in fundooContext.Users 
-                      join notes in fundooContext.Notes on user.UserId equals notes.UserId
-                      join labels in fundooContext.Label  on notes.NoteId equals labels.NoteId   
+                 var res = await ( from user in fundooContext.Users 
+                      join notes in fundooContext.Notes on user.UserId equals UserId
+                      join labels in fundooContext.Label  on notes.NoteId equals labels.NoteId where labels.UserId == UserId
+
 
                  select new LabelResponseModel
                  {
-                    UserId = user.UserId,
+                    UserId = UserId,
                     NoteId = notes.NoteId,
                     Title = notes.Title,
                     FirstName=user.FirstName,
@@ -71,27 +72,10 @@ namespace RepositoryLayer.Services
                     Email=user.Email, 
                     Description = notes.Description,
                     LabelName   = labels.LabelName,
-                  }).ToListAsync();
+                 }).ToListAsync();
 
-                /*  return await fundooContext.Label
-                       .Where(l => l.UserId == UserId)
 
-                       .Join(fundooContext.Notes
-                       .Where(n => n.NoteId == label.NoteId),
 
-                       l => l.UserId,
-                       n => n.NoteId,
-
-                       (l, n) => new LabelResponseModel
-                       {
-                           UserId = l.UserId,
-                           NoteId = n.NoteId,
-                           Title =  n.Title,
-                           Description = n.Description,
-                         //  LabelName   = l.LabelName,
-
-                       }).ToListAsync();
-                 */
                 return res; 
             }
             catch (Exception e)
@@ -100,9 +84,48 @@ namespace RepositoryLayer.Services
             }
         }
 
-        public async Task<List<Label>> GetlabelByNotesId(int UserId,int NotesId)
+        public async Task<List<LabelResponseModel>> GetlabelByNotesId(int UserId,int NoteId)
         {
+
+
             try
+            {
+                var label = fundooContext.Label.FirstOrDefault(u => u.UserId == UserId);
+                if (label == null)
+                {
+                    return null;
+                }
+
+
+                var res = await (from user in fundooContext.Users
+                                 join notes in fundooContext.Notes on user.UserId equals UserId where notes.NoteId == NoteId    
+                                 join labels in fundooContext.Label on notes.NoteId equals labels.NoteId
+                                 where labels.UserId == UserId
+
+
+                                 select new LabelResponseModel
+                                 {
+                                     UserId = user.UserId,
+                                     NoteId = notes.NoteId,
+                                     Title = notes.Title,
+                                     FirstName = user.FirstName,
+                                     LastName = user.LastName,
+                                     Email = user.Email,
+                                     Description = notes.Description,
+                                     LabelName = labels.LabelName,
+                                 }).ToListAsync();
+
+
+
+                return res;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+
+            /*
+               try
             {
 
                 return await fundooContext.Label.Where(x => x.NoteId == NotesId && x.UserId==UserId).ToListAsync();
@@ -112,7 +135,9 @@ namespace RepositoryLayer.Services
             {
                 throw e; 
             }
+            */
         }
+            
 
         public async Task<string> UpdateLabel(int UserId,int NoteId,string LabelName)
         {

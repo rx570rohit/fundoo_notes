@@ -11,7 +11,7 @@ namespace RepositoryLayer.Interfaces
     public interface ILabelRL
     {
         Task AddLabel(int UserId,int NoteId,string labelName);
-        Task <List<Label>> GetlabelByNotesId(int UserId,int NotesId);
+        Task <List<LabelResponseModel>> GetlabelByNotesId(int UserId,int NotesId);
         Task <string> UpdateLabel(int UserId,int NoteId,string LabelName);
         Task<string> DeleteLabel(int UserId,int NoteId);
         Task<List<LabelResponseModel>> GetAllLabelsByLinqJoins(int UserId);

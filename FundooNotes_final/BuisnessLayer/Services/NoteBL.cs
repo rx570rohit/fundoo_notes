@@ -33,11 +33,11 @@ namespace BusinessLayer.Services
 
 
 
-        public async Task<List<Note>> GetAllNote(int UserId)
+        public async Task<List<Note>> GetAllNote()
         {
             try
             {
-                return await this.noteRL.GetAllNote(UserId);
+                return await this.noteRL.GetAllNote();
             }
             catch (Exception e)
             {

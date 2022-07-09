@@ -53,25 +53,22 @@ namespace FundooNote.Controllers
             }
         }
 
-        [Authorize]
-        [HttpGet("UserGetAll")]
+     
+        [HttpGet("GetAllNotes")]
 
         public async Task<ActionResult> GetAllNote()
         {
             try
             {
-                var currentUser = HttpContext.User;
-                int userId = Convert.ToInt32(currentUser.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-                var note = fundooContext.Notes.FirstOrDefault(u => u.UserId == userId);
-                if (note == null)
-                {
-
-                    return this.BadRequest(new { status=404,success = true, message = "Note Doesn't Exits" });
-
-                }
                 List<Note> noteList = new List<Note>();
 
-                noteList = await this.noteBL.GetAllNote(userId);
+                noteList = await this.noteBL.GetAllNote();
+                if (noteList == null)
+                {
+
+                    return this.BadRequest(new { status = 404, success = true, message = "Note Doesn't Exits" });
+
+                }
 
                 return Ok(new { status = 201,success = true, message = "GetAllNote Successfully", data = noteList });
 
@@ -86,20 +83,21 @@ namespace FundooNote.Controllers
         [HttpGet("GetAllNotesUsingRedisCache")]
         public async Task<IActionResult> GetAllNotesUsingRedisCache()
         {
-            var currentUser = HttpContext.User;
-            int userId = Convert.ToInt32(currentUser.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+            //var currentUser = HttpContext.User;
+            //int userId = Convert.ToInt32(currentUser.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
            // var cacheKey = "NotesList";
             string serializedNotesList;
 
-            var note = fundooContext.Notes.FirstOrDefault(u => u.UserId == userId);
-            if (note == null)
+          //      var note = fundooContext.Notes.FirstOrDefault(u => u.UserId == userId);
+            var notesList = await this.noteBL.GetAllNote();
+            if (notesList == null)
             {
 
-                return this.BadRequest(new {status=404, success = true, message = "Note Doesn't Exits" });
+                return this.BadRequest(new {status=404, success = false, message = "Note Doesn't Exits" });
 
             }
 
-            var notesList = await this.noteBL.GetAllNote(userId);
+          //  var notesList = await this.noteBL.GetAllNote();
 
             var redisNotesList = await this.distributedCache.GetAsync(cacheKey);
             if (redisNotesList != null)
@@ -235,22 +233,22 @@ namespace FundooNote.Controllers
         [Authorize]
         [HttpPut("ArchiveNote/{NoteId}")]
 
-        public async Task<ActionResult> ArchiveNote(int NoteId)
+        public async Task<ActionResult> ArchiveNote(int noteId)
         {
             try
             {
                 var currentUser = HttpContext.User;
                 int userId = Convert.ToInt32(currentUser.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-                var note = fundooContext.Notes.FirstOrDefault(u => u.UserId == userId && u.NoteId == NoteId);
+                var note = fundooContext.Notes.FirstOrDefault(u => u.UserId == userId && u.NoteId == noteId);
                 if (note == null)
                 {
 
-                    return this.BadRequest(new { success = true, message = "Sorry! Note Doesn't Exist Please Create a Notes" });
+                    return this.BadRequest(new {status =404, success = false, message = "Sorry! Note Doesn't Exist Please Create a Notes" });
 
                 }
-                await this.noteBL.ArchiveNote(userId, NoteId);
+                await this.noteBL.ArchiveNote(userId, noteId);
 
-                return Ok(new { success = true, message = $"Note Archive Successfully for the note" });
+                return Ok(new { status=200, success = true, message = $"Note Archive Successfully for the note" });
 
             }
             catch (Exception e)

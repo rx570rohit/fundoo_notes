@@ -1,3 +1,4 @@
+"Add User"
 {
   "firstName": "RohitSoni",
   "lastName": "SoniRohit",
@@ -14,41 +15,40 @@
 }
 
 
-task (Done)
- 1. date +7 
- 2. date reminder velidation yyyy-mm-dd hh:mm:ss
- 
 
+"Add Notes"
 {
   "title": "ASP.NET",
   "description": "Full Stack",
-  "colour": "Green2"
+  "colour": "Grey"
 }
 
-
-https://github.com/Remant-475/FundooNotes
-
-regex format(date time)
-
-(yyyy-mm-dd hh:mm:ss)2020-12-29 19:30:45
-
 {
-  "title": "Master",
+  "title": "WebDevelopment",
   "description": "Asp.Net",
   "colour": "Green"
 }
 
+task (Done)
+ 1. date +7 
+ 2. date reminder velidation yyyy-mm-dd hh:mm:ss
+ 3.(yyyy-mm-dd hh:mm:ss)2020-12-29 19:30:45
+ 
+
+regex format(date time)
+
+(yyyy-mm-dd hh:mm:ss) -  2020-12-29 19:30:45
 
 
+Add Label 
+{
+  Master Book 
+  
+  RedHat
+  
+  GreyHat
+  
+  WhiteHat 
+}
 
-await from ed in fundooContext.Label.Where(x => x.UserId == UserId)
 
-                                   join d in fundooContext.Notes on ed.NoteId equals d.NoteId
-
-                                   select new
-
-                                   {
-                                       LabelName = ed.LabelName,
-                                       UserId = ed.UserId,
-                                       NoteId = ed.NoteId,
-                                   };

@@ -83,6 +83,7 @@ namespace Fundoo_NotesWebApi.Controllers
                 }
                 else { return this.NotFound(new { success = false, message = "No Label found" }); }
             }
+
             catch (Exception e)
             {
                 throw e;
@@ -113,8 +114,9 @@ namespace Fundoo_NotesWebApi.Controllers
             }
             catch (Exception e)
             {
-                return this.BadRequest(new { Status = 401, isSuccess = false, message = e.InnerException.Message });
+                return this.BadRequest(new { Status = 400, isSuccess = false, message = e.InnerException.Message });
             }
+
         }
 
         [HttpPut("UpdateLabel/{NoteId}/{LabelName}")]
@@ -138,7 +140,7 @@ namespace Fundoo_NotesWebApi.Controllers
             }
             catch (Exception e)
             {
-                return this.BadRequest(new { Status = 401, isSuccess = false, message = e.InnerException.Message });
+                return this.BadRequest(new { Status = 400, isSuccess = false, message = e.InnerException.Message });
             }
         }
 

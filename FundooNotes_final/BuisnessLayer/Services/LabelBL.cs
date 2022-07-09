@@ -38,7 +38,7 @@ namespace BuisnessLayer.Services
         }
 
 
-        public async Task<List<Label>> GetlabelByNotesId(int UserId,int NotesId)
+        public async Task<List<LabelResponseModel>> GetlabelByNotesId(int UserId,int NotesId)
         {
             try
             {

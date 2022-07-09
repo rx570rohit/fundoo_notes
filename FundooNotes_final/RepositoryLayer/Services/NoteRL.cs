@@ -50,11 +50,11 @@ namespace RepositoryLayer.Services
             }
         }
 
-        public async Task<List<Note>> GetAllNote(int userId)
+        public async Task<List<Note>> GetAllNote()
         {
             try
             {
-                var note = fundooContext.Notes.Where(u => u.UserId == userId).FirstOrDefault();
+                var note = fundooContext.Notes.FirstOrDefault();
                 if (note == null)
                 {
                     return null;

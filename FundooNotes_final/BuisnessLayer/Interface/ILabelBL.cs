@@ -11,7 +11,7 @@ namespace BuisnessLayer.Interface
     public interface ILabelBL
     {
         Task AddLabel(int UserId, int NoteId, string labelName);
-        Task <List<Label>> GetlabelByNotesId(int UserId,int NoteId);
+        Task <List<LabelResponseModel>> GetlabelByNotesId(int UserId,int NoteId);
         Task <string> UpdateLabel( int UserId, int NoteId,string LabelName);
         Task<string> DeleteLabel(int UserId,int NoteId);
         Task<List<LabelResponseModel>> GetAllLabelsByLinqJoins(int UserId);

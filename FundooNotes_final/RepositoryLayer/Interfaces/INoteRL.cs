@@ -11,7 +11,7 @@ namespace RepositoryLayer.Interfaces
     public interface INoteRL
     {
         Task AddNote(int UserId, NotePostModel notePostModel);
-        Task<List<Note>> GetAllNote(int userId);
+        Task<List<Note>> GetAllNote();
         Task <List<Note>> GetNote(int UserId,int NotesId);
         Task<String> UpdateNote(int UserId,NoteUpdateModel noteUpdateModel, long noteId);
         Task<string> DeleteNotes(int UserId,long NoteId);
