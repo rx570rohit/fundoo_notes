@@ -17,11 +17,6 @@
 
 
 "Add Notes"
-{
-  "title": "ASP.NET",
-  "description": "Full Stack",
-  "colour": "Grey"
-}
 
 {
   "title": "WebDevelopment",
@@ -34,6 +29,7 @@ task (Done)
  2. date reminder velidation yyyy-mm-dd hh:mm:ss
  3.(yyyy-mm-dd hh:mm:ss)2020-12-29 19:30:45
  
+
 
 regex format(date time)
 
@@ -50,5 +46,17 @@ Add Label
   
   WhiteHat 
 }
+
+
+Collab
+
+{
+  "collabEmail": "sonirohit777@gmail.com",
+  "noteId": 3
+}
+
+
+
+
 
 

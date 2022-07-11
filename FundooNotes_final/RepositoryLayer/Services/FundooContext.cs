@@ -14,10 +14,15 @@ namespace RepositoryLayer.Services
 
         public DbSet<Label> Label { get; set; }
 
+        public DbSet<Collab> collabs { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Label>()
                   .HasKey(c => new { c.UserId, c.NoteId});
+
+            modelBuilder.Entity<Collab>()
+                 .HasKey(c => new { c.UserId, c.NoteId });
         }
     }
 }
